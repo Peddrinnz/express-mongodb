@@ -11,11 +11,6 @@ app.get("/", (req, res) => {
     res.status(200).send("Hello World!");
 });
 
-app.get("/books", async (req, res) => {
-    const listBooks = await Book.find({});
-    res.status(200).json(listBooks);
-});
-
 app.get("/books/:id", (req, res) => {
     const id = parseInt(req.params.id);
     const book = books.find((b) => b.id === id);
