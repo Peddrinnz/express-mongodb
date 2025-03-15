@@ -1,19 +1,19 @@
 import express from "express";
+import connect from "./config/dbConnect.js";
+import Book from "./models/book.js";
+
+const connection = await connect();
 
 const app = express();
 app.use(express.json());
-
-const books = [
-    { id: 1, name: "The Lord of the Rings", genre: "Fantasy" },
-    { id: 2, name: "To Kill a Mockingbird", genre: "Classic" }
-];
 
 app.get("/", (req, res) => {
     res.status(200).send("Hello World!");
 });
 
-app.get("/books", (req, res) => {
-    res.status(200).json(books);
+app.get("/books", async (req, res) => {
+    const listBooks = await Book.find({});
+    res.status(200).json(listBooks);
 });
 
 app.get("/books/:id", (req, res) => {
