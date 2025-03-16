@@ -1,9 +1,10 @@
 import Book from "../models/book.js";
+import { Author } from "../models/author.js";
 
 class BookController {
     static async listBooks(req, res) {
         try {
-            const listBooks = await Book.find({});
+            const listBooks = await Book.find({}).populate("author");
             res.status(200).json(listBooks);
         } catch (error) {
             res.status(400).json({ error: error.message });
@@ -21,9 +22,18 @@ class BookController {
     }
 
     static async createBook(req, res) {
+        const newBook = req.body;
         try {
-            const newBook = await Book.create(req.body);
-            res.status(201).json({message: "Book created",newBook});
+            const findAuthor = await Author.findById(newBook.author);
+            
+            if (!findAuthor) {
+                return res.status(400).json({ error: "Author not found" });
+            }
+    
+            const bookComplete = { ...newBook, author: findAuthor._id };
+            const createdBook = await Book.create(bookComplete);
+    
+            res.status(201).json({ message: "Book created", createdBook });
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
